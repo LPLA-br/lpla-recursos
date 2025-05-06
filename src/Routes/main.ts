@@ -24,7 +24,7 @@ MAIN.get('/ajuda', log, (req: Request, res: Response) =>
     "/:recurso":
     {
       GET: 1,
-      POST: 0,
+      POST: 1,
       PUT: 0,
       PATCH: 0,
       DELETE: 1
