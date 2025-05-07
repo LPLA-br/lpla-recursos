@@ -7,15 +7,20 @@ import { FILE_DELETE_ROUTE } from "./Routes/fileDelete";
 
 import { MAIN } from "./Routes/main";
 
+import { notFound } from "./notFound/notFound";
+
 const app = express();
 const PORTA = 8080;
 
 app.use('/', MAIN);
-app.use('/recurso/',
+app.use('/recursos/',
         FILE_HEAD_ROUTE ,
         FILE_GET_ROUTE , 
         FILE_POST_ROUTE ,
         FILE_DELETE_ROUTE );
+
+//tratamento de requisições para recursos inexistentes.
+app.use( notFound );
 
 // tratamento de url do express
 app.use( express.json() );

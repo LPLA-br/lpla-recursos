@@ -5,28 +5,26 @@
  */
 
 const axios = require("axios");
+const { writeFileSync } = require("node:fs");
+const { validar } = require("./axios-validateStatusConf");
 
 beforeAll(()=>
 {
-  writeFileSync( "../public/tamanho", "tamanho", { encoding: "utf-8" } );
+  const testContent = "tamanho";
+  writeFileSync( "../public/tamanho", testContent, { encoding: "utf-8" } );
 });
 
-test( "Recurso tem seu tamanho retornado", ()=>
+test( "Recurso tem seu tamanho retornado", async ()=>
 {
-  ( async ()=>
-  {
-    let resultado = await axios.head( "127.0.0.1:8080/recursos/tamanho" );
-    expect( resultado.status ).toBe( 200 );
-    expect( +resultado.headers["Content-Length"] ).not.toBeNaN();
-  })();
+  let resultado = await axios.head( "http://127.0.0.1:8080/recursos/tamanho", {validateStatus: validar});
+  expect( resultado.status ).toBe( 200 );
+  expect( +resultado.headers["Content-Length"] ).not.toBeNaN();
+  expect( +resultado.headers["Content-Length"] ).toBe( 7 );
 });
 
-test( "Recurso inexistente", ()=>
+test( "Recurso inexistente", async ()=>
 {
-  ( async ()=>
-  {
-    let resultado = await axios.head( "127.0.0.1:8080/recursos/inexistente" );
-    expect( resultado.status ).toBe( 404 );
-  })();
+  let resultado = await axios.head( "http://127.0.0.1:8080/recursos/inexistente", {validateStatus: validar});
+  expect( resultado.status ).toBe( 404 );
 });
 

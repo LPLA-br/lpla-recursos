@@ -6,41 +6,33 @@
 
 const axios = require("axios");
 const { writeFileSync } = require( "fs" );
+const { validar } = require("./axios-validateStatusConf");
 
 beforeAll(()=>
 {
   writeFileSync("../public/arquivo1", "arquivo1", { encoding: "utf-8" } );
 });
 
-test( "Obter recurso unitário do servidor", ()=>
+test( "Obter recurso unitário do servidor", async ()=>
 {
-  ( async ()=>
-  {
-    let resultado = await axios.get( "127.0.0.1:8080/recursos/arquivo1" );
+  let resultado = await axios.get( "http://127.0.0.1:8080/recursos/arquivo1", {validateStatus: validar});
 
-    expect( resultado.status ).toBe( 200 );
-    expect( resultado.headers["Content-Length"] ).toBeGreaterThan( 0 );
-  })();
+  expect( resultado.status ).toBe( 200 );
+  expect( resultado.headers["Content-Length"] ).toBeGreaterThan( 0 );
 });
 
-test( "Tentativa de obter recurso inexistente", ()=>
+test( "Tentativa de obter recurso inexistente", async ()=>
 {
-  ( async ()=>
-  {
-    let resultado = await axios.get( "127.0.0.1:8080/recursos/ogatomiaeamuricocapica" );
+  let resultado = await axios.get( "http://127.0.0.1:8080/recursos/ogatomiaeamuricocapica", {validateStatus: validar});
 
-    //Not found
-    expect( resultado.status ).toBe( 404 );
-  })();
+  //Not found
+  expect( resultado.status ).toBe( 404 );
 });
 
-test( "Tentativa de obter recurso sem nome em parametro de rota", ()=>
+test( "Tentativa de obter recurso sem nome em parametro de rota", async ()=>
 {
-  ( async ()=>
-  {
-    let resultado = await axios.get( "127.0.0.1:8080/recursos/" );
+  let resultado = await axios.get( "http://127.0.0.1:8080/recursos/", {validateStatus: validar});
 
-    //Bad request
-    expect( resultado.status ).toBe( 400 );
-  })();
+  //Bad request
+  expect( resultado.status ).toBe( 400 );
 });

@@ -7,65 +7,56 @@
 const axios = require("axios");
 const { readFile } = require("node:fs/promises");
 const { writeFileSync } = require("node:fs");
+const { validar } = require("./axios-validateStatusConf");
 
 beforeAll(()=>
 {
   writeFileSync( "./ascendido", "ascendido", { encoding: "utf-8" } );
 });
 
-test( "Subir recurso unitário para servidor", ()=>
+test( "Subir recurso unitário para servidor", async ()=>
 {
-  ( async ()=>
+  const form = new FormData();
+  const arquivo = await readFile( "./ascendido" );
+  form.append( "recurso", arquivo.buffer );
+
+  let resultado = await axios.post( "http://127.0.0.1:8080/recursos/ascendido", form, {validateStatus: validar});
+
+  // Created
+  expect( resultado.status ).toBe( 201 );
+
+  try
   {
-    const form = new FormData();
-    const arquivo = await readFile( "./ascendido" );
-    form.append( "recurso", arquivo.buffer );
-
-    let resultado = await axios.post( "127.0.0.1:8080/recursos/ascendido", form );
-
-    // Created
-    expect( resultado.status ).toBe( 201 );
-
-    try
-    {
-      const arquivo_subido = await readFile("../public/ascendido");
-    }
-    catch( err )
-    {
-      fail( "Recurso não subiu para o servidor" );
-    }
-
-  })();
+    const arquivo_subido = await readFile("../public/ascendido");
+  }
+  catch( err )
+  {
+    fail( "Recurso não subiu para o servidor" );
+  }
 });
 
-test( "Tentativa de subir recurso sem nome especificado no parametro de rota", ()=>
+test( "Tentativa de subir recurso sem nome especificado no parametro de rota", async ()=>
 {
-  ( async ()=>
-  {
-    const form = new FormData();
-    const arquivo = await readFile( "./ascendido" );
-    form.append( "recurso", arquivo.buffer );
+  const form = new FormData();
+  const arquivo = await readFile( "./ascendido" );
+  form.append( "recurso", arquivo.buffer );
 
-    let resultado = await axios.post( "127.0.0.1:8080/recursos/", form );
+  let resultado = await axios.post( "http://127.0.0.1:8080/recursos/", form, {validateStatus: validar});
 
-    //Bad request
-    expect( resultado.status ).toBe( 400 );
-  })();
+  //Bad request
+  expect( resultado.status ).toBe( 400 );
 });
 
-test( "Subir N vezes o mesmo recurso", ()=>
+test( "Subir N vezes o mesmo recurso", async ()=>
 {
-  ( async ()=>
-  {
-    const form = new FormData();
-    const arquivo = await readFile( "./ascendido" );
-    form.append( "recurso", arquivo.buffer );
+  const form = new FormData();
+  const arquivo = await readFile( "./ascendido" );
+  form.append( "recurso", arquivo.buffer );
 
-    await axios.post( "127.0.0.1:8080/recursos/ascendido", form );
-    await axios.post( "127.0.0.1:8080/recursos/ascendido", form );
-    const resultado = await axios.post( "127.0.0.1:8080/recursos/ascendido", form );
+  await axios.post( "http://127.0.0.1:8080/recursos/ascendido", form, {validateStatus: validar});
+  await axios.post( "http://127.0.0.1:8080/recursos/ascendido", form, {validateStatus: validar});
+  const resultado = await axios.post( "http://127.0.0.1:8080/recursos/ascendido", form, {validateStatus: validar});
 
-    // Not modified
-    expect( resultado.status ).toBe( 301 );
-  })();
+  // Not modified
+  expect( resultado.status ).toBe( 301 );
 });

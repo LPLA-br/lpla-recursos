@@ -21,7 +21,7 @@ MAIN.get('/ajuda', log, (req: Request, res: Response) =>
 {
   res.json(
   {
-    "/:recurso":
+    "/recursos/:NOME":
     {
       GET: 1,
       POST: 1,

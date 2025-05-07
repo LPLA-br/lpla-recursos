@@ -10,7 +10,7 @@
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "test": "jest --verbose",
+    "test": " cd ./testes && jest --verbose",
     "build": "cd ./src && npm exec tsc",
     "start": "cd ./build && node index.js",
     "clear": "rm -r ./build/*"
