@@ -9,6 +9,11 @@ import { MAIN } from "./Routes/main";
 
 import { notFound } from "./notFound/notFound";
 
+import { join } from "node:path";
+import { readFileSync } from "node:fs";
+import { CONFIG_DIR } from "./config_dir.js";
+const CONFILE = readFileSync( join( CONFIG_DIR ) );
+
 const app = express();
 const PORTA = 8080;
 
@@ -27,6 +32,6 @@ app.use( express.json() );
 app.use( express.urlencoded({ extended: true }) );
 
 // páginas html estáticas. descomente para servir arquivos e páginas.
-app.use(express.static('./public'));
+//app.use(express.static( JSON.parse( CONFILE.toString() ).diretorio_publico ));
 
 export { app, PORTA };

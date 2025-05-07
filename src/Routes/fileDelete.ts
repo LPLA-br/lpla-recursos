@@ -10,10 +10,12 @@ import path from "node:path";
 
 import { param, validationResult } from "express-validator";
 
-const CONFILE = readFileSync( path.join("../../config.json") );
+import { CONFIG_DIR } from "../config_dir.js";
+
+const CONFILE = readFileSync( path.join( CONFIG_DIR ) );
 
 const CONFIG = JSON.parse( CONFILE.toString() );
-const PUBLIC = CONFIG.diretorio_publico || path.join("../../public");
+const PUBLIC = CONFIG.diretorio_publico;
 const FILE_DELETE_ROUTE = Router();
 
 FILE_DELETE_ROUTE.delete('/:recurso', log, param("recurso").notEmpty().isString(), (req: Request, res: Response) =>
@@ -22,21 +24,27 @@ FILE_DELETE_ROUTE.delete('/:recurso', log, param("recurso").notEmpty().isString(
 
   if ( EXCECOES.isEmpty() )
   {
-    fs.rm( path.join( PUBLIC.concat(  ) ) )
-    .then( ()=>
+    (async ()=>
     {
-      res
-      .status( StatusCodes["OK"] )
-      .json( {} );
-    })
-    .catch( (reason)=>
-    {
-      console.error( reason );
-      res
-      .status( StatusCodes["INTERNAL_SERVER_ERROR"] )
-      .type('application/json')
-      .json( {"reason": reason } );
-    });
+      try
+      {
+        await fs.rm( path.join( PUBLIC.concat( req.params.recurso ) ) )
+        .then( ()=>
+        {
+          res
+          .status( StatusCodes["OK"] )
+          .json( {} );
+        })
+      }
+      catch( err )
+      {
+        console.error( err );
+        res
+        .status( StatusCodes["INTERNAL_SERVER_ERROR"] )
+        .type('application/json')
+        .json( {"reason": err } );
+      }
+    })();
     return;
   }
   res
