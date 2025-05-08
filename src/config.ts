@@ -4,6 +4,7 @@ import { FILE_HEAD_ROUTE } from "./Routes/fileHead";
 import { FILE_GET_ROUTE } from "./Routes/fileGet";
 import { FILE_POST_ROUTE } from "./Routes/fileUpload";
 import { FILE_DELETE_ROUTE } from "./Routes/fileDelete";
+import { FILE_GET_LIST_ROUTE } from "./Routes/fileList";
 
 import { MAIN } from "./Routes/main";
 
@@ -22,7 +23,8 @@ app.use('/recursos/',
         FILE_HEAD_ROUTE ,
         FILE_GET_ROUTE , 
         FILE_POST_ROUTE ,
-        FILE_DELETE_ROUTE );
+        FILE_DELETE_ROUTE,
+        FILE_GET_LIST_ROUTE);
 
 //tratamento de requisições para recursos inexistentes.
 app.use( notFound );

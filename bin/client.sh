@@ -13,13 +13,19 @@ ajuda()
     CLIENTE PARA SERVIDOR DE ARQUIVOS REST
 
     client.sh HOST PORTA AÇÂO [NOME] [FILEPATH] \n
-    --listar-recursos|-l   \n
+    --listar-recursos|-l      lista os recursos no diretório bin do servidor. Não requer mais argumentos\n
     --obter-info-recurso|-i   obter tamanho do recurso no cabeçalho da resposta. Requer NOME \n
     --obter-recurso|-o        obter recurso do servidor. Requer NOME \n
     --subir-recurso|-s        subir recurso local para o servidor. Requer NOME e FILEPATH \n
     --deletar-recurso|-d      deleta recurso no servidor. Requer NOME\n
     --help|--ajuda|*          obter esta ajuda.
   "
+}
+
+listarRecursos()
+{
+  curl http://$HOST:$PORT/recursos;
+  echo -e '\n';
 }
 
 infoRecurso()
@@ -33,6 +39,7 @@ obterRecurso()
 {
   curl -X GET \
     http://$HOST:$PORT/recursos/$RESNAME;
+  echo -e '\n';
 }
 
 subirRecurso()
@@ -41,17 +48,20 @@ subirRecurso()
     -F nome="$RESNAME" \
     -F recurso="@$FILEPATH" \
     http://$HOST:$PORT/recursos/
+  echo -e '\n';
 }
 
 deletarRecurso()
 {
   curl -v -X DELETE \
     http://$HOST:$PORT/recursos/$RESNAME
+  echo -e '\n';
 }
 
 atualizarRecurso()
 {
   echo -e "recurso não implementado";
+  echo -e '\n';
 }
 
 
@@ -67,6 +77,7 @@ fi
 
 case "$ACTION" in
   --listar-recursos|-l)
+    listarRecursos;
     exit 0;
     ;;
   --obter-info-recurso|-i)
