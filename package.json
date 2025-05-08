@@ -13,7 +13,7 @@
     "test": " cd ./testes && jest --verbose",
     "build": "cd ./src && npm exec tsc",
     "start": "cd ./build && node index.js",
-    "clear": "rm -r ./build/*"
+    "clear": "rm -r ./build/* && ls testes/ | grep --invert-match '.*.js' | xargs -d '\n' -I {} rm {} && rm ./public/*"
   },
   "dependencies": {
     "express": "^5.1.0",

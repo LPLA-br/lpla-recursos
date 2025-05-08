@@ -32,7 +32,10 @@ FILE_GET_ROUTE.get('/:recurso', log, param( "recurso", paramErrMsg ).notEmpty().
         if ( err )
         {
           console.error( err );
-          throw new Error( "Arquivo stat: " + err );
+          res
+          .status( StatusCodes["NOT_FOUND"] )
+          .json( {} )
+          throw new Error( "fileGet(), stat: " + err );
         }
       });
 
@@ -51,6 +54,7 @@ FILE_GET_ROUTE.get('/:recurso', log, param( "recurso", paramErrMsg ).notEmpty().
       .status(StatusCodes["INTERNAL_SERVER_ERROR"])
       .json( { erro: err } );
     }
+    return;
   }
   res
   .status(StatusCodes["BAD_REQUEST"])

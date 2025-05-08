@@ -18,6 +18,7 @@ const CONFIG = JSON.parse( CONFILE.toString() );
 const PUBLIC = CONFIG.diretorio_publico;
 const FILE_DELETE_ROUTE = Router();
 
+//não retorna representação do recurso
 FILE_DELETE_ROUTE.delete('/:recurso', log, param("recurso").notEmpty().isString(), (req: Request, res: Response) =>
 {
   const EXCECOES = validationResult(req);
@@ -28,7 +29,9 @@ FILE_DELETE_ROUTE.delete('/:recurso', log, param("recurso").notEmpty().isString(
     {
       try
       {
-        await fs.rm( path.join( PUBLIC.concat( req.params.recurso ) ) )
+        const filepath = path.join( PUBLIC.concat( req.params.recurso ) ); 
+
+        await fs.rm( filepath )
         .then( ()=>
         {
           res
@@ -40,7 +43,7 @@ FILE_DELETE_ROUTE.delete('/:recurso', log, param("recurso").notEmpty().isString(
       {
         console.error( err );
         res
-        .status( StatusCodes["INTERNAL_SERVER_ERROR"] )
+        .status( StatusCodes["NO_CONTENT"] )
         .type('application/json')
         .json( {"reason": err } );
       }
