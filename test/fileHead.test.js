@@ -18,8 +18,7 @@ test( "Recurso tem seu tamanho retornado", async ()=>
 {
   let resultado = await axios.head( "http://127.0.0.1:8080/recursos/tamanho", {validateStatus: validar});
   expect( resultado.status ).toBe( 200 );
-  expect( +resultado.headers["Content-Length"] ).not.toBeNaN();
-  expect( +resultado.headers["Content-Length"] ).toBe( 7 );
+  expect( +resultado.headers.getContentLength() ).toBe( 7 );
 });
 
 test( "Recurso inexistente", async ()=>

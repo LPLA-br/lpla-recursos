@@ -12,6 +12,7 @@ const { validar } = require("./axios-validateStatusConf");
 beforeAll(()=>
 {
   writeFileSync( "../public/deletaturo", "deletaturo", { encoding: "utf-8" } );
+  writeFileSync( "../public/deletaturo2", "deletaturo2", { encoding: "utf-8" } );
 });
 
 test( "Recurso deletado é removido do servidor", async ()=>
@@ -20,13 +21,20 @@ test( "Recurso deletado é removido do servidor", async ()=>
 
   expect( resultado.status ).toBe( 200 );
 
-  let arquivo_deletado;
   try
   {
-    arquivo_deletado = await readFile("../public/deletaturo");
-    fail("Recurso não foi deletado");
+    await readFile("../public/deletaturo")
+    .then( ()=>{ fail("recurso não eliminado") } );
   }
   catch( err )
   {}
+});
+
+test( "Deleção de recurso inexistente resulta sempre em NO_CONTENT", async ()=>
+{
+  await axios.delete( "http://127.0.0.1:8080/recursos/deletaturo2", {validateStatus: validar});
+  let resultado = await axios.delete( "http://127.0.0.1:8080/recursos/deletaturo2", {validateStatus: validar});
+
+  expect( resultado.status ).toBe( 204 );
 });
 

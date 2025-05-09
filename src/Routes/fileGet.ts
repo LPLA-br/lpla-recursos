@@ -4,7 +4,8 @@ import { Router } from "express";
 import { log } from "../middleware/log.js";
 import { StatusCodes } from "../status-codes.js";
 
-import { readFileSync, stat } from "node:fs";
+import { readFileSync } from "node:fs";
+import { stat } from "node:fs/promises";
 import path from "node:path";
 
 import { param, validationResult } from "express-validator";
@@ -25,35 +26,28 @@ FILE_GET_ROUTE.get('/:recurso', log, param( "recurso", paramErrMsg ).notEmpty().
 
   if ( EXCECOES.isEmpty() )
   {
-    try
+    ( async ()=>
     {
-      stat( PUBLIC.concat(req.params.recurso), ( err )=>
+      try
       {
-        if ( err )
-        {
-          console.error( err );
-          res
-          .status( StatusCodes["NOT_FOUND"] )
-          .json( {} )
-          throw new Error( "fileGet(), stat: " + err );
-        }
-      });
+        await stat( PUBLIC.concat( req.params.recurso ) );
 
-      if ( process.env.PWD !== undefined )
-      {
-        res
-        .status(StatusCodes["OK"])
-        .sendFile( req.params.recurso, { root: path.join( process.env.PWD, PUBLIC ) } );
-        return;
+        if ( process.env.PWD !== undefined )
+        {
+          res
+          .status(StatusCodes["OK"])
+          .sendFile( req.params.recurso, { root: path.join( process.env.PWD, PUBLIC ) } );
+          return;
+        }
       }
-    }
-    catch( err )
-    {
-      console.error( err );
-      res
-      .status(StatusCodes["INTERNAL_SERVER_ERROR"])
-      .json( { erro: err } );
-    }
+      catch( err )
+      {
+        console.error( err );
+        res
+        .status( StatusCodes["NOT_FOUND"] )
+        .json( {} )
+      }
+    })();
     return;
   }
   res

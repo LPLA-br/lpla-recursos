@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import { Router } from "express";
 
 import { log } from "../middleware/log.js";
+import recursoJaExiste from "../middleware/recursoJaExiste.js";
+
 import { StatusCodes } from "../status-codes.js";
 
 import * as fs from "node:fs/promises";
@@ -23,6 +25,7 @@ const FILE_POST_ROUTE = Router();
 const upload = multer();
 
 const bodyFailMsg = "campo STRING chamado nome=X ausente na requisição";
+
 /**
  * Faz upload do arquivo criando o recurso
  * Request:
@@ -33,6 +36,7 @@ FILE_POST_ROUTE.post(
   ,log
   ,upload.single("recurso")
   ,body( "nome", bodyFailMsg ).notEmpty().isString()
+  ,recursoJaExiste
   ,(req: Request, res: Response) =>
 {
   const EXCECOES = validationResult(req);
@@ -43,9 +47,10 @@ FILE_POST_ROUTE.post(
     {
       try
       {
-        const arquivo: Express.Multer.File | undefined = req.file;
+        const arquivoEnviado: Express.Multer.File | undefined = req.file;
+        const diretorioPublico = path.join( PUBLIC.concat( req.body.nome ) );
 
-        if ( arquivo === undefined )
+        if ( arquivoEnviado === undefined )
         {
           res
           .status( StatusCodes["BAD_REQUEST"] )
@@ -53,7 +58,7 @@ FILE_POST_ROUTE.post(
           return;
         }
 
-        await fs.writeFile( path.join(PUBLIC.concat( req.body.nome )), arquivo.buffer )
+        await fs.writeFile( diretorioPublico, arquivoEnviado.buffer )
         .then( ()=>
         {
           res

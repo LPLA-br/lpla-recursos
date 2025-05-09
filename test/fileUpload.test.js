@@ -5,29 +5,41 @@
  */
 
 const axios = require("axios");
-const { readFile } = require("node:fs/promises");
-const { writeFileSync } = require("node:fs");
+const { readFile, rm, readdir } = require("node:fs/promises");
+const { join } = require("node:path");
 const { validar } = require("./axios-validateStatusConf");
 
-beforeAll(()=>
-{
-  writeFileSync( "./ascendido", "ascendido", { encoding: "utf-8" } );
+const filename = "upload";
+
+beforeAll( async ()=>
+{ 
+  const diretorioPublico = "../public";
+  const dircontent = await readdir( diretorioPublico );
+  dircontent.forEach( async ( arquivo )=>
+  {
+    await rm( join( diretorioPublico, arquivo) );
+  });
 });
 
-test( "Subir recurso unitário para servidor", async ()=>
+test( "Subir um recurso cria representação e retorna CREATED", async ()=>
 {
   const form = new FormData();
-  const arquivo = await readFile( "./ascendido" );
-  form.append( "recurso", arquivo.buffer );
+  let resultado;
+  let testBlob;
 
-  let resultado = await axios.post( "http://127.0.0.1:8080/recursos/ascendido", form, {validateStatus: validar});
+  testBlob = new Blob(["testBlob"]);
+  testBlob.type = "text/plain";
 
-  // Created
+  form.append( "nome", `${filename}` );
+  form.append( "recurso", testBlob );
+
+  resultado = await axios.post( "http://127.0.0.1:8080/recursos", form, {validateStatus: validar});
+
   expect( resultado.status ).toBe( 201 );
 
   try
   {
-    const arquivo_subido = await readFile("../public/ascendido");
+    await readFile(`../public/${filename}`);
   }
   catch( err )
   {
@@ -35,28 +47,50 @@ test( "Subir recurso unitário para servidor", async ()=>
   }
 });
 
-test( "Tentativa de subir recurso sem nome especificado no parametro de rota", async ()=>
+test( "Tentativa de subir recurso sem nome especificado no body resulta em BAD_REQUEST", async ()=>
 {
   const form = new FormData();
-  const arquivo = await readFile( "./ascendido" );
-  form.append( "recurso", arquivo.buffer );
+  let resultado;
+  let testBlob;
 
-  let resultado = await axios.post( "http://127.0.0.1:8080/recursos/", form, {validateStatus: validar});
+  testBlob = new Blob(["testBlob"]);
+  testBlob.type = "text/plain";
+
+  form.append( "recurso", testBlob );
+
+  resultado = await axios.post( "http://127.0.0.1:8080/recursos", form, {validateStatus: validar});
 
   //Bad request
   expect( resultado.status ).toBe( 400 );
 });
 
-test( "Subir N vezes o mesmo recurso", async ()=>
+test( "Tentativa de subir recurso sem especificar recurso resulta em BAD_REQUEST", async ()=>
 {
   const form = new FormData();
-  const arquivo = await readFile( "./ascendido" );
-  form.append( "recurso", arquivo.buffer );
+  let resultado;
 
-  await axios.post( "http://127.0.0.1:8080/recursos/ascendido", form, {validateStatus: validar});
-  await axios.post( "http://127.0.0.1:8080/recursos/ascendido", form, {validateStatus: validar});
-  const resultado = await axios.post( "http://127.0.0.1:8080/recursos/ascendido", form, {validateStatus: validar});
+  form.append( "nome", "receba" );
 
-  // Not modified
-  expect( resultado.status ).toBe( 301 );
+  resultado = await axios.post( "http://127.0.0.1:8080/recursos", form, {validateStatus: validar});
+
+  //Bad request
+  expect( resultado.status ).toBe( 400 );
+});
+
+test( "Subir N>1 vez o mesmo recurso resulta em SEE_OTHER", async ()=>
+{
+  const form = new FormData();
+  let testBlob;
+
+  testBlob = new Blob([filename]);
+  testBlob.type = "text/plain";
+
+  form.append( "nome", `${filename}` );
+  form.append( "recurso", testBlob );
+
+  await axios.post( `http://127.0.0.1:8080/recursos`, form, {validateStatus: validar})
+  await axios.post( `http://127.0.0.1:8080/recursos`, form, {validateStatus: validar})
+  let res = await axios.post( `http://127.0.0.1:8080/recursos`, form, {validateStatus: validar})
+
+  expect( res.status ).toBe( 303 );
 });

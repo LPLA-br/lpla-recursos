@@ -30,10 +30,22 @@ FILE_HEAD_ROUTE.head('/:recurso', log, param("recurso").notEmpty().isString(), (
     {
       try
       {
-        const arquivo = await fs.readFile( path.join(PUBLIC.concat(req.params.recurso)) );
+        let diretorioPublico;
+        let arquivoStats;
+
+        diretorioPublico =  await fs.readdir( PUBLIC );
+        if ( !diretorioPublico.find( recurso => { if( recurso == req.params.recurso ) return recurso } ) )
+        {
+          res
+          .status( StatusCodes["NOT_FOUND"] )
+          .json();
+          return;
+        }
+
+        arquivoStats = await fs.stat( path.join(PUBLIC.concat(req.params.recurso)) );
 
         res
-        .header( "Content-Length", arquivo.length.toString() )
+        .header( "Content-Length", arquivoStats.size.toString() )
         .send();
       }
       catch( err )
