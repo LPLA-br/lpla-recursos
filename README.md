@@ -1,4 +1,6 @@
-# RECURSOS REST
+# LPLA-RECURSOS
+
+![logo](logo/lplarecursos.png)
 
 APLICAÇÃO API SIMPLES PARA TROCA DE ARQUIVOS COMPUTADOR PESSOAL E CLIENTE EM REDE LOCAL
 
@@ -8,20 +10,36 @@ e computador com Servidor executante para troca rápida de arquivos como recurso
 
 ## CHANGELOG
 
-- 0.4.0
-    - Visao geral da aplicação
-    - Obter ajuda sobre api
+Conventional commits
+
+- 0.6.0
+    - Visao geral do servidor /
+    - Listar recursos no servidor
+    - Obter informacoes do recurso
     - Subir recurso
     - Obter recurso
-    - Obter informacoes do recurso
-    - Remover recurso
-
-## ARQUITETURA
-
-Arquitetura Controller apenas evitando sobre-engenharia
-e enfatizando os princípios KISS e YAGNI.
+    - Deletar recurso
 
 ## TESTES
 
 Testes implementados com o JEST 29.7.0 a nível de api
+
+## COMO EXECUTAR
+
+```
+git clone https://github.com/LPLA-br/ \
+npm install \
+npm run build \
+npm run start \
+```
+
+## DEPENDÊNCIAS
+
+Precisas do gerenciador de pacotes padrão npm e
+interpretador javascript node para excutar esta
+aplicação.
+
+## LICENSA DE USO
+
+ISC - livre
 

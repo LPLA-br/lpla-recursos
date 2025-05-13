@@ -3,33 +3,19 @@ import { Router } from "express";
 
 import { log } from "../middleware/log";
 
+const packageJson = require("../../package.json");
+
 const MAIN = Router();
 
-MAIN.get('/', log, (req: Request, res: Response) =>
+MAIN.get('/appinfo', log, (req: Request, res: Response) =>
 {
   res
   .json(
   {
-    versao:"0.6.0",
-    nome:"api-recursos",
-    objetivo:"Troca básica de arquivo com o computador via api REST",
-    ajuda: `${req.ip}/ajuda`
-  });
-});
-
-MAIN.get('/ajuda', log, (req: Request, res: Response) =>
-{
-  res.json(
-  {
-    "/recursos/:NOME":
-    {
-      HEAD: 1,
-      GET: 1,
-      POST: 1,
-      PUT: 0,
-      PATCH: 0,
-      DELETE: 1
-    }
+    versao: packageJson.version,
+    nome: packageJson.name,
+    descricao:"Aplicação para troca básica de arquivo com o computador via api REST em ambiente CLI",
+    ajuda: `${req.ip}/api-docs`
   });
 });
 

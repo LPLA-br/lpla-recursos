@@ -1,4 +1,7 @@
 import express from "express";
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('../swagger.json');
+
 
 import { FILE_HEAD_ROUTE } from "./Routes/fileHead";
 import { FILE_GET_ROUTE } from "./Routes/fileGet";
@@ -25,6 +28,8 @@ app.use('/recursos/',
         FILE_POST_ROUTE ,
         FILE_DELETE_ROUTE,
         FILE_GET_LIST_ROUTE);
+app.use('/api-docs', swaggerUi.serve );
+app.get('/api-docs', swaggerUi.setup( swaggerDocument ));
 
 //tratamento de requisições para recursos inexistentes.
 app.use( notFound );
