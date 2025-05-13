@@ -13,7 +13,8 @@
     "test": " cd ./test && jest --verbose",
     "build": "cd ./src && npm exec tsc",
     "start": "cd ./build && node index.js",
-    "clear": "rm -r ./build/* || ls test/ | grep --invert-match '.*.js' | xargs -d '\n' -I {} rm ./test/{} || rm ./public/* ;"
+    "clear": "rm -r ./build/* || ls test/ | grep --invert-match '.*.js' | xargs -d '\n' -I {} rm ./test/{} || rm ./public/* ;",
+    "start:prod": "if [[ ! -f ./public/client.sh ]]; then cp ./bin/client.sh ./public; fi && cd ./build && node index.js"
   },
   "dependencies": {
     "@types/swagger-ui-express": "^4.1.8",
