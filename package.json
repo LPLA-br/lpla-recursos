@@ -1,6 +1,6 @@
 {
-  "name": "recursos",
-  "version": "0.4.0",
+  "name": "lplarecursos",
+  "version": "0.6.0",
   "description": "Servidor REST de arquivos simples",
   "keywords": [
     "arquivos"
@@ -10,18 +10,25 @@
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc",
-    "run": "cd ./build && node index.js"
+    "test": " cd ./test && jest --verbose",
+    "build": "cd ./src && npm exec tsc",
+    "start": "cd ./build && node index.js",
+    "clear": "rm -r ./build/* || ls test/ | grep --invert-match '.*.js' | xargs -d '\n' -I {} rm ./test/{}",
+    "build:prod": "npm install && npm run build && npm prune --production",
+    "start:prod": "if [[ ! -f ./public/client.sh ]]; then cp ./bin/client.sh ./public; fi && cd ./build && node index.js"
   },
   "dependencies": {
     "express": "^5.1.0",
     "express-validator": "^7.2.1",
-    "multer": "^1.4.5-lts.2"
+    "multer": "^1.4.5-lts.2",
+    "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
     "@types/express": "^5.0.1",
+    "@types/multer": "^1.4.12",
     "@types/node": "^22.14.1",
+    "@types/swagger-ui-express": "^4.1.8",
+    "axios": "^1.9.0",
     "jest": "^29.7.0",
     "typescript": "^5.8.3"
   }

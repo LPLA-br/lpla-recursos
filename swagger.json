@@ -1,0 +1,250 @@
+{
+  "swagger": "2.0",
+  "info":
+  {
+    "title": "Documentação manual da API do lpla-recursos",
+    "description": "API para troca insegura de recursos entre computadores e outros dispositivos em rede local",
+    "version": "0.7.0",
+    "nota": "nivel de identacao de (path) redefinido para facilitar identificacao de fechamentos incorretos"
+  },
+  "host": "0.0.0.0",
+  "basePath": "/",
+  "schemes":
+  [
+    "http"
+  ],
+  "paths":
+  {
+
+"appinfo":
+{
+  "get":
+  {
+    "summary": "Retorna informações básicas sobre a aplicação.",
+    "description": "Retorna informações de versão, descricao e como obter ajuda para uso direto da api",
+    "consumes":
+    [
+      "example/example"
+    ],
+    "produces":
+    [
+      "application/json"
+    ],
+    "responses":
+    {
+      "OK":
+      {
+        "description": "Corpo conterá um objeto em json"
+      }
+    }
+  }
+},
+
+"recursos":
+{
+  "get":
+  {
+    "summary": "Retorna lista de nomes de arquivos.",
+    "description": "Retorna lista de nomes de arquivos no diretório publico manipulado pelo processo servidor",
+    "consumes":
+    [
+     "example/example"
+    ],
+    "produces":
+    [
+      "application/json"
+    ],
+    "responses":
+    {
+      "OK":
+      {
+        "description": "Corpo conterá lista de nome de arquivos no servidor"
+      },
+      "INTERNAL_SERVER_ERROR":
+      {
+        "description": "Servidor não pode ler o diretório publico por algum motivo"
+      }
+    }
+  },
+  "post":
+  {
+    "summary": "Sobe representação para o servidor e cria recurso.",
+    "description": "transfere todos os bytes do arquivo para o servidor criando representação como arquivo no servidor.",
+    "parameters":
+    [
+      {
+        "in": "body",
+        "name": "nome",
+        "required": true,
+        "type": "string",
+        "minimum": 1,
+        "description": "Nome do recurso e sua representação no servidor"
+      },
+      {
+        "in": "body",
+        "name": "recurso",
+        "required": true,
+        "type": "Blob",
+        "minimum": 1,
+        "description": "Representação a ser escrita no armazenamento do servidor"
+      }
+    ],
+    "consumes":
+    [
+      "multipart/form-data"
+    ],
+    "produces":
+    [
+      "application/json"
+    ],
+    "responses":
+    {
+      "CREATED":
+      {
+        "description": "Um novo recurso e criado através da representação enviada."
+      },
+      "BAD_REQUEST":
+      {
+        "description":"Arquivo ou nome de recurso ausentes no corpo da requisição"
+      },
+      "CREATED":
+      {
+        "description": "Cria recurso e escreve representação no servidor mas não retorna representação"
+      },
+      "INTERNAL_SERVER_ERROR":
+      {
+        "description": "Falha inesperada no servidor: path para diretorio publico, permissões etc..."
+      },
+      "SEE_OTHER":
+      {
+        "description": "Tentativar de sobrescrita de recurso pré existente retorna redireção. Vide Location"
+      }
+    }
+  }
+},
+
+"recursos/{nome}":
+{
+  "head":
+  {
+    "summary": "Retorna informações provenientes do comando unix stat(1)",
+    "description": "Retorna tamanho do arquivo no cabeçalho Content-Length",
+    "consumes":
+    [
+     "example/example"
+    ],
+    "produces":
+    [
+      "application/json"
+    ],
+    "responses":
+    {
+      "OK":
+      {
+        "description": "Corpo conterá lista de nome de arquivos no servidor"
+      },
+      "BAD_REQUEST":
+      {
+        "description": "Parametro de rota (nome) não informado"
+      },
+      "NOT_FOUND":
+      {
+        "description": "O recurso a ter representação analisada não foi encontrado"
+      },
+      "INTERNAL_SERVER_ERROR":
+      {
+        "description": "Servidor não pode ler o diretório publico por algum motivo"
+      }
+    }
+  },
+  "get":
+  {
+    "summary": "Obter representação de recurso do servidor",
+    "description": "transfere todos os bytes do arquivo para o cliente requisitante",
+    "parameters":
+    [
+      {
+        "in": "path",
+        "name": "nome",
+        "required": true,
+        "type": "string",
+        "minimum": 1,
+        "description": "Nome do recurso e sua representação no servidor"
+      }
+    ],
+    "produces":
+    [
+      "application/json"
+    ],
+    "responses":
+    {
+      "OK":
+      {
+        "description":"deleção realizada com sucesso"
+      },
+      "NO_CONTENT":
+      {
+        "description": "deleção de tal recurso já realizada, nada a ser feito"
+      },
+      "BAD_REQUEST":
+      {
+        "description": "parametro de rota (nome) não informado"
+      }
+    }
+  },
+  "delete":
+  {
+    "summary": "Remove recurso e sua representação do servidor",
+    "description": "remove todos os bytes do arquivo e não retorna representação para cliente",
+    "parameters":
+    [
+      {
+        "in": "path",
+        "name": "nome",
+        "required": true,
+        "type": "string",
+        "minimum": 1,
+        "description": "Nome do recurso e sua representação no servidor"
+      }
+    ],
+    "produces":
+    [
+      "application/json"
+    ],
+    "responses":
+    {
+      "OK":
+      {
+        "description":"deleção realizada com sucesso"
+      },
+      "NO_CONTENT":
+      {
+        "description": "deleção de tal recurso já realizada, nada a ser feito"
+      },
+      "BAD_REQUEST":
+      {
+        "description": "parametro de rota (nome) não informado"
+      }
+    }
+  },
+  "put":
+  {
+    "summary": "Substitui representação do recurso pre existente",
+    "description": "sobrescreve arquivo e não retorna representação para cliente",
+    "produces":
+    [
+      "application/json"
+    ],
+    "responses":
+    {
+      "NOT_IMPLEMENTED":
+      {
+        "description":"endpoint ainda não implementado"
+      }
+    }
+  }
+}
+
+  }
+}
+
