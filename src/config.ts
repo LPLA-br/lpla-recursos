@@ -2,7 +2,6 @@ import express from "express";
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('../swagger.json');
 
-
 import { FILE_HEAD_ROUTE } from "./Routes/fileHead";
 import { FILE_GET_ROUTE } from "./Routes/fileGet";
 import { FILE_POST_ROUTE } from "./Routes/fileUpload";
@@ -13,13 +12,8 @@ import { MAIN } from "./Routes/main";
 
 import { notFound } from "./notFound/notFound";
 
-import { join } from "node:path";
-import { readFileSync } from "node:fs";
-import { CONFIG_DIR } from "./config_dir.js";
-const CONFILE = readFileSync( join( CONFIG_DIR ) );
-
 const app = express();
-const PORTA = 8080;
+const PUBLIC = "../public/";
 
 app.use('/', MAIN);
 app.use('/recursos/',
@@ -38,7 +32,4 @@ app.use( notFound );
 app.use( express.json() );
 app.use( express.urlencoded({ extended: true }) );
 
-// páginas html estáticas. descomente para servir arquivos e páginas.
-//app.use(express.static( JSON.parse( CONFILE.toString() ).diretorio_publico ));
-
-export { app, PORTA };
+export { app, PUBLIC };

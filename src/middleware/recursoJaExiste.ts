@@ -1,17 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 
-import { readFileSync } from "node:fs";
 import { readdir } from "node:fs/promises";
-import * as path from "node:path";
 
 import { StatusCodes } from "../status-codes";
 
-import { CONFIG_DIR } from "../config_dir";
-
-const CONFILE = readFileSync( path.join( CONFIG_DIR ) );
-
-const CONFIG = JSON.parse( CONFILE.toString() );
-const PUBLIC = CONFIG.diretorio_publico;
+import { PUBLIC } from "../config.js";
 
 const recursoJaExiste = ( req: Request, res: Response, next: NextFunction ) =>
 {

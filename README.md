@@ -15,30 +15,40 @@ Compatível com:
 
 Conventional commits
 
-- 0.6.0
+- 0.6.X
     - Visao geral do servidor /
     - Listar recursos no servidor
     - Obter informacoes do recurso
     - Subir recurso
     - Obter recurso
     - Deletar recurso
+- 1.0.X
+    - define programa como apto para atuar em redes locais.
+    - elimina arquivo de configuração desnecessario (overengineering)
+    - melhora tratamento de linha de comando
+    - corrige forma de invocação em linha de comando para permitir IPv6
 
 ## TESTES
 
-Testes implementados com o JEST 29.7.0 a nível de api (90%)
+Executados manualmente através do cliente.sh
 
 ## COMO EXECUTAR
 
 ```
 git clone https://github.com/LPLA-br/lpla-recursos \
-npm install \
-npm run build:prod  # Execute uma vez \
-npm run start:prod  # Execute para eventuais usos \
 
-# Obtenha o cliente no outro dispositivo com shell unix padrão
+# INSTALANDO E TRANSPILANDO
+npm install \
+npm run build:prod  # Execute uma vez para copiar o cliente para ./public \
+
+# EXECUTANDO SERVIDOR NA MÁQUINA SERVIDORA
+cd ./build
+node ./index.js --host (IPv4|IPv6-link-local) --port (porta_TCP)
+
+# OBTENDO CLIENTE ATRAVÉS DO CURL NA MÁQUINA CLIENTE
 curl -X GET http://IP:8080/client.sh > ./client.sh && chmod 0770 ./client.sh
 
-# Obtenha ajuda
+# OBTENDO AJUDA SOBRE COMO USAR O SCRIPT cliente.sh
 ./cliente.sh -h
 ```
 
@@ -48,11 +58,14 @@ Descreva problemas na secção ISSUES do github.
 
 ## RECOMENDAÇÕES DE SEGURANÇA
 
-Conecte um roteador a outra interface de rede de teu computador (rede local)
-e configure o iptables (firewall) para bloquear requisições para a porta de
-serviço do servidor na outra interface de rede com acesso a World Wide Web.
-Alternativamente ative o servidor somente para transferir arquivos e logo em
-seguida o desligue usos eventuais.
+IPv4
+1. Crie uma rede local sem acesso a internet para usar este programa.
+2. Redes com acesso a WAN (web) ative o servidor somente para transferir arquivos e logo em
+seguida o desligue em usos eventuais.
+
+IPv6 LINK-LOCAL
+1. endereço link-local é recomendado pois não é rotável por qualquer máquina fora da rede LAN
+em que o serviço está escutando.
 
 Este software servidor foi projetado para ser menos burocrático que o sftp do sshd.service
 sendo menos seguro, mas, mais usável.

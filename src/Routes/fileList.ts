@@ -4,16 +4,10 @@ import { Router } from "express";
 import { log } from "../middleware/log.js";
 import { StatusCodes } from "../status-codes.js";
 
-import { readFileSync } from "node:fs";
 import { readdir } from "node:fs/promises";
-import path from "node:path";
 
-import { CONFIG_DIR } from "../config_dir.js";
+import { PUBLIC } from "../config.js";
 
-const CONFILE = readFileSync( path.join( CONFIG_DIR ) );
-
-const CONFIG = JSON.parse( CONFILE.toString() );
-const PUBLIC = CONFIG.diretorio_publico;
 const FILE_GET_LIST_ROUTE = Router();
 
 FILE_GET_LIST_ROUTE.get('/', log, (req: Request, res: Response) =>
